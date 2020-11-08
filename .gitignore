@@ -9,6 +9,9 @@
 # BlueJ files
 *.ctxt
 
+# Dotenv
+*.env
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 

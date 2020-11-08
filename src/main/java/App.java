@@ -1,5 +1,6 @@
 package main;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -10,9 +11,11 @@ import java.util.TimerTask;
  */
 public class App
 {	
-    // Home Automation Simulator
-    private final static String THINGSPEAK_API_KEY = "A0CIYT0EQ8D273RQ"; // ATTENTION : PUT your API_KEY
-    private final static int CHANNEL_ID = 915944;
+	// Home Automation Simulator
+	private final static Dotenv dotenv = Dotenv.load();
+
+    private final static String THINGSPEAK_API_KEY = dotenv.get("THINGSPEAK_API_KEY"); // ATTENTION : PUT your API_KEY
+    private final static int CHANNEL_ID = Integer.parseInt(dotenv.get("CHANNEL_ID"));
 
     private static SimulatorChannel thingSpeak;
 	

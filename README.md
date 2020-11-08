@@ -4,6 +4,13 @@
 
 ### [maven](https://maven.apache.org/install.html)
 
+## Add .env in the root of project with env variable
+### In /.env
+```
+THINGSPEAK_API_KEY=YOUR API KEY HERE
+CHANNEL_ID=YOUR CHANNEL ID HERE
+```
+
 ## Compile project with dependencies
 ```
 mvn clean compile assembly:single
