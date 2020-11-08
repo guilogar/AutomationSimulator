@@ -7,7 +7,7 @@ import java.util.TimerTask;
 
 /**
  * @author Guillermo López García
- * @version 1.0 November, 14th 2015
+ * @version 2.0 November, 8th 2020
  */
 public class App
 {	
