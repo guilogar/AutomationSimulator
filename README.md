@@ -1,4 +1,4 @@
-# HomeAutomationSimulatorRefactor
+# AutomationSimulator
 
 ## Install Maven
 
