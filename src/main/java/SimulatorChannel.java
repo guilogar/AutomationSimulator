@@ -3,9 +3,10 @@ import com.funapp.thingspeak.Channel;
 import com.funapp.thingspeak.Entry;
 import com.funapp.thingspeak.ThingSpeakException;
 import java.lang.Exception;
+
 /**
- * @author Ivan Fernadez de la Rosa & Juan Boubeta-Puig (University of Cadiz)
- * @version 2.0 November, 14th 2015. Updated by Daniel Payn Alcedo.
+ * @author Guillermo López García
+ * @version 2.0 November, 8th 2020
  */
 public class SimulatorChannel 
 {

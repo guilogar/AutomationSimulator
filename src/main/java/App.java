@@ -4,6 +4,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author Guillermo López García
@@ -20,24 +22,10 @@ public class App
     private static SimulatorChannel thingSpeak;
 	
     // Frequency updating time
-    private static int time = 60000;
-    
-    private static double energyconsumption = 0.0; // Field 1 in thingspeak
-    private static double humidity = 0.0;          // Field 2 in thingspeak
-    private static double temperature = 0.0;       // Field 3 in thingspeak
-    private static double tvconsumption = 0.0;     // Field 4 in thingspeak
+    private static int time = Integer.parseInt(dotenv.get("TIME_TASK"));
     
     // Formater to values
     static DecimalFormat df2 = new DecimalFormat("#,##");
-    
-    private static double maxHumidity = 100.0;
-    private static double minHumidity = 0.0;
-    private static double maxTemperature = 70.0;
-    private static double minTemperature = 0.0;
-    private static double maxTvConsumption = 250.0;
-    private static double minTvConsumption = 0.0;
-    private static double maxEnergyConsumption = 4650.0;
-    private static double minEnergyConsumption = 0.0;
     
     private static double random(double min, double max)
     {
@@ -48,7 +36,7 @@ public class App
 	public static void main (String [] args)
 	{
     	thingSpeak = new SimulatorChannel(THINGSPEAK_API_KEY, CHANNEL_ID);
-    	generateData(thingSpeak,0);
+    	generateData(thingSpeak, 0);
     }
     
     /*
@@ -62,36 +50,39 @@ public class App
 			@Override
 			//Code will be repeated:
 			public void run()
-			{  
-				//generation of energyconsumption value and format the value with 2 decimals
-				energyconsumption = random(minEnergyConsumption, maxEnergyConsumption);
-				energyconsumption = Math.round(energyconsumption * 100.0) / 100.0;
-				//generation of temperature value and format the value with 2 decimals
-				temperature = random(minTemperature, maxTemperature);
-				temperature = Math.round(temperature * 100.0) / 100.0;
-				//generation of humidity value and format the value with 2 decimals
-				humidity = random(minHumidity, maxHumidity);
-				humidity = Math.round(humidity * 100.0) / 100.0;
-				//generation of tvconsumption value and format the value with 2 decimals
-				tvconsumption = random(minTvConsumption, maxTvConsumption);
-				tvconsumption = Math.round(tvconsumption * 100.0) / 100.0;
+			{
+				String[] fields = dotenv.get("FIELDS").split(",");
+				String[] mins = dotenv.get("MIN").split(",");
+				String[] maxs = dotenv.get("MAX").split(",");
+
+				LinkedHashMap<String, Double> values = new LinkedHashMap<>();
+
+
+				for(int i = 0; i < fields.length; i++)
+				{
+					String field = fields[i];
+					Double min = Double.parseDouble(mins[i]);
+					Double max = Double.parseDouble(maxs[i]);
+					
+					double r = random(min, max);
+					double result = Math.round(r * 100.0) / 100.0;
+
+					values.put(field, result);
+				}
 			
 				System.out.println("\n*Generating random data from channel "  + thingspeak.getChannelName() +" \n");
 				//We will establish a value for each ThingSpeak channel field
 
-				thingspeak.setDataField(1,energyconsumption);
-				System.out.println("Random value of Field 1, Energy Consumption : " + energyconsumption);
-				
-				thingspeak.setDataField(2, temperature);
-				System.out.println("Random value of Field 2, Temperature : " + temperature);
-									
-				thingspeak.setDataField(3, humidity);
-				System.out.println("Random value of Field 3, Humidity : " + humidity);
-				
-				thingspeak.setDataField(4, tvconsumption);
-				System.out.println("Random value of Field 4, Tv Consumption : " + tvconsumption);
-									
-				
+				int numField = 1;
+				for (Map.Entry<String, Double> entry : values.entrySet())
+				{
+					String field = entry.getKey();
+					Double value = entry.getValue();
+					
+					System.out.println("Random value of Field 1, " + field + " : " + value);
+
+					thingspeak.setDataField(numField++, value);
+				}
 				
 				System.out.println("\n*Remember, system will generate data every "  + time/1000 + " seconds\n");	            	
 				thingspeak.sendData();	                

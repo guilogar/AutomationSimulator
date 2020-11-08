@@ -5,10 +5,14 @@
 ### [maven](https://maven.apache.org/install.html)
 
 ## Add .env in the root of project with env variable
-### In /.env
+### In /.env, add this example with your thingspeak api key and channel id
 ```
 THINGSPEAK_API_KEY=YOUR API KEY HERE
 CHANNEL_ID=YOUR CHANNEL ID HERE
+TIME_TASK=60000
+FIELDS=energyconsumption,humidity,temperature,tvconsumption
+MIN=0.0,0.0,0.0,0.0
+MAX=4650.0,100.0,70.0,250.0
 ```
 
 ## Compile project with dependencies
