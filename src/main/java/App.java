@@ -67,7 +67,7 @@ public class App
 					double r = random(min, max);
 					double result = Math.round(r * 100.0) / 100.0;
 
-					values.put(field, result);
+					values.put(field.trim(), result);
 				}
 			
 				System.out.println("\n*Generating random data from channel "  + thingspeak.getChannelName() +" \n");
