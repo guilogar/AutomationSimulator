@@ -6,6 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Arrays;
 
 /**
  * @author Guillermo López García
@@ -16,10 +17,10 @@ public class App
 	// Home Automation Simulator
 	private final static Dotenv dotenv = Dotenv.load();
 
-    private final static String THINGSPEAK_API_KEY = dotenv.get("THINGSPEAK_API_KEY"); // ATTENTION : PUT your API_KEY
-    private final static int CHANNEL_ID = Integer.parseInt(dotenv.get("CHANNEL_ID"));
+    private final static String[] THINGSPEAK_API_KEYS = dotenv.get("THINGSPEAK_API_KEYS").split(",");
+    private final static String[] CHANNEL_IDS = dotenv.get("CHANNEL_IDS").split(",");
 
-    private static SimulatorChannel thingSpeak;
+    private static SimulatorChannel[] thingSpeakSimulators;
 	
     // Frequency updating time
     private static int time = Integer.parseInt(dotenv.get("TIME_TASK"));
@@ -35,15 +36,39 @@ public class App
     
 	public static void main (String [] args)
 	{
-    	thingSpeak = new SimulatorChannel(THINGSPEAK_API_KEY, CHANNEL_ID);
-    	generateData(thingSpeak, 0);
-    }
-    
-    /*
-     * thingspeak : channel
-     * delay : time for waiting in milliseconds next start of execution
-     */
-	private static void generateData(final SimulatorChannel thingspeak, int delay)
+		int thingSpeakSimulatorsLength = THINGSPEAK_API_KEYS.length;
+
+		thingSpeakSimulators = new SimulatorChannel[thingSpeakSimulatorsLength];
+
+		for(int i = 0; i < thingSpeakSimulatorsLength; i++)
+		{
+			thingSpeakSimulators[i] = new SimulatorChannel(
+				THINGSPEAK_API_KEYS[i].trim(), Integer.parseInt(CHANNEL_IDS[i].trim())
+			);
+		}
+		
+		String[] fields = dotenv.get("FIELDS").split(",");
+		String[] mins = dotenv.get("MIN").split(",");
+		String[] maxs = dotenv.get("MAX").split(",");
+
+		int numChannel = 0;
+		for(int i = 0; i < fields.length; i += 8)
+		{
+			generateData(
+				thingSpeakSimulators[numChannel++], 0,
+				Arrays.copyOfRange(fields, i, i + 8),
+				Arrays.copyOfRange(mins, i, i + 8),
+				Arrays.copyOfRange(maxs, i, i + 8)
+			);
+		}
+	}
+	
+	private static void generateData(
+		final SimulatorChannel thingspeak, int delay,
+		final String[] fields,
+		final String[] mins,
+		final String[] maxs
+	)
 	{
 		TimerTask timerTask = new TimerTask()
 		{ 
@@ -51,23 +76,22 @@ public class App
 			//Code will be repeated:
 			public void run()
 			{
-				String[] fields = dotenv.get("FIELDS").split(",");
-				String[] mins = dotenv.get("MIN").split(",");
-				String[] maxs = dotenv.get("MAX").split(",");
-
 				LinkedHashMap<String, Double> values = new LinkedHashMap<>();
-
 
 				for(int i = 0; i < fields.length; i++)
 				{
 					String field = fields[i];
-					Double min = Double.parseDouble(mins[i]);
-					Double max = Double.parseDouble(maxs[i]);
-					
-					double r = random(min, max);
-					double result = Math.round(r * 100.0) / 100.0;
 
-					values.put(field.trim(), result);
+					if(field != null)
+					{
+						Double min = Double.parseDouble(mins[i].trim());
+						Double max = Double.parseDouble(maxs[i].trim());
+						
+						double r = random(min, max);
+						double result = Math.round(r * 100.0) / 100.0;
+
+						values.put(field.trim(), result);
+					}
 				}
 			
 				System.out.println("\n*Generating random data from channel "  + thingspeak.getChannelName() +" \n");

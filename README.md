@@ -7,8 +7,8 @@
 ## Add .env in the root of project with env variable
 ### In /.env, add this example with your thingspeak api key and channel id
 ```
-THINGSPEAK_API_KEY=YOUR API KEY HERE
-CHANNEL_ID=YOUR CHANNEL ID HERE
+THINGSPEAK_API_KEYS=YOUR API's KEY HERE
+CHANNEL_IDS=YOUR CHANNEL ID's HERE
 TIME_TASK=60000
 FIELDS=energyconsumption,humidity,temperature,tvconsumption
 MIN=0.0,0.0,0.0,0.0
@@ -23,6 +23,11 @@ mvn clean compile assembly:single
 ## Execute project with dependencies .jar
 ```
 java -jar target/HomeAutomationSimulatorRefactor-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
+
+## Important!
+```
+If you change any environment variable, you must recompile the application!
 ```
 
 ## Initial thanks to...
