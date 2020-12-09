@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Arrays;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * @author Guillermo López García
@@ -51,14 +52,26 @@ public class App
 		String[] mins = dotenv.get("MIN").split(",");
 		String[] maxs = dotenv.get("MAX").split(",");
 
-		int numChannel = 0;
-		for(int i = 0; i < fields.length; i += 8)
+		int numChannel = 0, range = 7;
+		for(int i = 0; i < fields.length; i += range)
 		{
+			String[] f = new String[range + 1];
+			f[0] = dotenv.get("SENSOR_NAME");
+			ArrayUtils.addAll(f, Arrays.copyOfRange(fields, i, i + range));
+			
+			String[] sensors = dotenv.get("SENSOR_VALUE").split("-");
+
+			String[] mi = new String[range + 1];
+			mi[0] = (sensors[0] != null) ? sensors[0] : "1";
+			ArrayUtils.addAll(mi, Arrays.copyOfRange(mins, i, i + range));
+			
+			String[] ma = new String[range + 1];
+			ma[0] = (sensors[1] != null) ? sensors[1] : mi[0];
+			ArrayUtils.addAll(ma, Arrays.copyOfRange(maxs, i, i + range));
+
 			generateData(
 				thingSpeakSimulators[numChannel++], 0,
-				Arrays.copyOfRange(fields, i, i + 8),
-				Arrays.copyOfRange(mins, i, i + 8),
-				Arrays.copyOfRange(maxs, i, i + 8)
+				f, mi, ma
 			);
 		}
 	}
@@ -89,6 +102,11 @@ public class App
 						
 						double r = random(min, max);
 						double result = Math.round(r * 100.0) / 100.0;
+						
+						if(field.equalsIgnoreCase(dotenv.get("SENSOR_NAME")))
+						{
+							result = Math.floor(result);
+						}
 
 						values.put(field.trim(), result);
 					}
