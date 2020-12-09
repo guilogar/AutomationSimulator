@@ -57,17 +57,17 @@ public class App
 		{
 			String[] f = new String[range + 1];
 			f[0] = dotenv.get("SENSOR_NAME");
-			ArrayUtils.addAll(f, Arrays.copyOfRange(fields, i, i + range));
+			f = ArrayUtils.addAll(f, Arrays.copyOfRange(fields, i, i + range));
 			
 			String[] sensors = dotenv.get("SENSOR_VALUE").split("-");
 
 			String[] mi = new String[range + 1];
 			mi[0] = (sensors[0] != null) ? sensors[0] : "1";
-			ArrayUtils.addAll(mi, Arrays.copyOfRange(mins, i, i + range));
+			mi = ArrayUtils.addAll(mi, Arrays.copyOfRange(mins, i, i + range));
 			
 			String[] ma = new String[range + 1];
 			ma[0] = (sensors[1] != null) ? sensors[1] : mi[0];
-			ArrayUtils.addAll(ma, Arrays.copyOfRange(maxs, i, i + range));
+			ma = ArrayUtils.addAll(ma, Arrays.copyOfRange(maxs, i, i + range));
 
 			generateData(
 				thingSpeakSimulators[numChannel++], 0,
