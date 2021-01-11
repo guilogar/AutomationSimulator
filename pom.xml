@@ -5,12 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.funapp.thingspeak</groupId>
-  <artifactId>HomeAutomationSimulatorRefactor</artifactId>
+  <artifactId>AutomationSimulatorRefactor</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>HomeAutomationSimulatorRefactor</name>
+  <name>AutomationSimulatorRefactor</name>
   <!-- FIXME change it to the project's website -->
-  <url>https://github.com/guilogar/HomeAutomationSimulationRefactor</url>
+  <url>https://github.com/guilogar/AutomationSimulationRefactor</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
