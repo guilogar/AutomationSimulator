@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Arrays;
+import java.time.Instant;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
@@ -48,7 +49,16 @@ public class App
 			);
 		}
 		
-		String[] fields = dotenv.get("FIELDS").split(",");
+		String[] fi = dotenv.get("FIELDS").split(",");
+		String[] fields = new String[fi.length + 1];
+		
+		for(int i = 0; i < fi.length; i++)
+		{
+			fields[i] = fi[i];
+		}
+
+		fields[fields.length - 1] = "tiempoRegistro";
+
 		String[] mins = dotenv.get("MIN").split(",");
 		String[] maxs = dotenv.get("MAX").split(",");
 
@@ -97,18 +107,27 @@ public class App
 
 					if(field != null)
 					{
-						Double min = Double.parseDouble(mins[i].trim());
-						Double max = Double.parseDouble(maxs[i].trim());
-						
-						double r = random(min, max);
-						double result = Math.round(r * 100.0) / 100.0;
-						
-						if(field.equalsIgnoreCase(dotenv.get("SENSOR_NAME")))
+						try
 						{
-							result = Math.floor(result);
+							Double min = Double.parseDouble(mins[i].trim());
+							Double max = Double.parseDouble(maxs[i].trim());
+							
+							double r = random(min, max);
+							double result = Math.round(r * 100.0) / 100.0;
+							
+							if(field.equalsIgnoreCase(dotenv.get("SENSOR_NAME")))
+							{
+								result = Math.floor(result);
+							}
+							values.put(field.trim(), result);
+						} catch(Exception e)
+						{
+							if(field.equalsIgnoreCase("tiempoRegistro"))
+							{
+								double result = (double) Instant.now().toEpochMilli();
+								values.put(field.trim(), result);
+							}
 						}
-
-						values.put(field.trim(), result);
 					}
 				}
 			
